@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-node-modules-
 
       - name: Run tests and generate coverage
-        run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless --verbose
+        run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
         working-directory: ./front
 
       - name: Upload coverage report
