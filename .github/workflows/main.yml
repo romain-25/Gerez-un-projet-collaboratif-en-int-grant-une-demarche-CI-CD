@@ -45,6 +45,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        working-directory: ./back
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD_4193a52b-e2d1-420a-87f7-f1fe2cb70a3c -Dsonar.projectName='Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD'
             
   frontend-tests:
