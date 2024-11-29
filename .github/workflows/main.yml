@@ -64,7 +64,7 @@ jobs:
         working-directory: ./front
 
       - name: Run tests and generate coverage
-        run: npx jest --coverage
+        run: npm run test  -- --browsers=ChromeHeadlessNoSandbox
         working-directory: ./front
 
       - name: Upload coverage report
