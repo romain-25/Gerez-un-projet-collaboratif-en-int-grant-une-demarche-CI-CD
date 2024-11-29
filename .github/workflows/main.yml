@@ -64,7 +64,7 @@ jobs:
         working-directory: ./front
 
       - name: Run tests and generate coverage
-        run: npm run test  -- --browsers=ChromeHeadlessNoSandbox
+        run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
         working-directory: ./front
 
       - name: Upload coverage report
