@@ -29,36 +29,31 @@ jobs:
           name: backend-test-coverage
           path: ./back/target/site/jacoco/
 
-  frontend-tests:
-    name: Front-end tests and coverage report
+  front-end:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ./front
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
+      - name: 'Cache dependencies'
+        uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-
 
-      - name: Run tests and generate coverage
-        run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
+      - name: 'Install dependencies'
         working-directory: ./front
+        run: npm install
 
-      - name: Upload coverage report
+      - name: 'Run tests with coverage'
+        working-directory: ./front
+        run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
+
+      - name: 'Upload coverage result with artifacts'
         uses: actions/upload-artifact@v3
         with:
-          name: frontend-test-coverage
-          path: ./front/coverage/
+          name: coverage
+          path: ./front/coverage
