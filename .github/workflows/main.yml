@@ -21,12 +21,13 @@ jobs:
     
       - name: Build and test with Maven
         run: mvn clean test
+        working-directory: ./back
     
       - name: Upload Jacoco report
         uses: actions/upload-artifact@v4
         with:
           name: backend-test-coverage
-          path: target/site/jacoco/
+          path: ./back/target/site/jacoco/
             
   frontend-tests:
     name: Front-end tests and coverage report
@@ -49,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-test-coverage
-          path: coverage/
+          path: ./front/coverage/
