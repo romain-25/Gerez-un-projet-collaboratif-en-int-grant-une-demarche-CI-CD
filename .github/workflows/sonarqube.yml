@@ -1,13 +1,13 @@
-name: Build
+name: Build and analyze SonarQube
 
 on:
   push:
     branches:
-      - main
+      - sonar
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze with SonarQube
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,15 @@ jobs:
         with:
           java-version: 17
           distribution: zulu
-          
+
+      - name: Start SonarQube in Docker
+        run: |
+          docker run -d \
+            --name sonarqube \
+            -p 9000:9000 \
+            sonarqube:latest
+          sleep 60  # Attendre que SonarQube démarre
+
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -38,8 +46,12 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: http://localhost:9000  # URL du serveur Docker
         working-directory: ./back
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD_4193a52b-e2d1-420a-87f7-f1fe2cb70a3c \
+          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
           -Dsonar.projectName='Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD'
+
+      - name: Stop SonarQube Docker container
+        if: always()
+        run: docker stop sonarqube && docker rm sonarqube
