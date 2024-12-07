@@ -13,46 +13,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # Étape 1 : Checkout du code
+      - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Set up Node.js 
+        #with:
+        #  fetch-depth: 0
+
+      # Étape 2 : Frontend - Installation et tests
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16
-          
-      - name: Install dependencies
+          node-version: 18
+
+      - name: Install dependencies for frontend
         working-directory: front
-        run: npm i
+        run: npm install
 
-      - name: Run tests
+      - name: Run tests for frontend
         working-directory: front
-        run: npm run test -- --watch=false --code-coverage
+        run:  npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
-      - name: Check lcov.info existence
-        run: ls -la front/coverage
+      - name: Debug frontend coverage directory
+        working-directory: front/coverage/bobapp
+        run: ls -l
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: frontend-coverage
-          path: front/coverage
+      - name: Verify frontend coverage report
+        working-directory: front/coverage/bobapp
+        run: ls -l lcov.info
 
+      # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v4
+       # uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: front
           args: >
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
-            -Dsonar.sources=src
-            -Dsonar.javascript.lcov.reportPaths=coverage\bobapp\lcov.info
-            -Dsonar.exclusions=src/proxy.config.json,src/styles.scss,src/environments/environment.prod.ts,src/environments/environment.ts,**/*.spec.ts
-            -Dsonar.coverage.exclusions=src/main.ts,src/polyfills.ts,src/test.ts,src/index.html
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=front/src
+            -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,Dockerfile
+            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info
 
       # Se connecter à Docker Hub avec un jeton d'accès
       - name: Login to Docker Hub
