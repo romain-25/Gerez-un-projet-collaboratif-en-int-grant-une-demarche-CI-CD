@@ -33,7 +33,8 @@ jobs:
 
       - name: Verify frontend coverage report
         working-directory: front/coverage
-        run: ls -l lcov.info
+        run: ls -l bobapp/lcov.info
+
 
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
