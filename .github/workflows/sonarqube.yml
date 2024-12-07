@@ -1,10 +1,12 @@
 name: SonarQube Analysis
+
 on:
   push:
     branches:
       - sonar
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   sonar-analysis:
     name: SonarQube Analysis
@@ -12,7 +14,8 @@ jobs:
     
     steps:
       # Étape 1 : Checkout du code
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Récupère l'historique complet
       
@@ -32,7 +35,7 @@ jobs:
       
       # Étape 4 : Analyse SonarCloud
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
@@ -47,3 +50,4 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.java.test.binaries=target/test-classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -X
