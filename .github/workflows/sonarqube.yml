@@ -38,6 +38,11 @@ jobs:
         with:
           projectBaseDir: back
           args: >
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
-            -Dsonar.organization=romain-25
+            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+            -Dsonar.organization=romain-25 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=bbdd9663bd3dd1c9efb63cb04e76d3ac9f82f788 \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.tests=src/test/java \
+            -Dsonar.java.binaries=target/classes \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
