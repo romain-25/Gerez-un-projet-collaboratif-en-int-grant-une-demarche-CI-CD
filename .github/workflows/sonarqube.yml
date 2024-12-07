@@ -39,7 +39,25 @@ jobs:
         working-directory: front/coverage/bobapp
         run: ls -l lcov.info
 
-
+      # Étape 4 : Analyse SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v4
+       # uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: front
+          args: >
+            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.organization=romain-25
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=back/src,front/src
+            -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,Dockerfile
+            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info
+            -Dsonar.java.binaries=back/target/classes
+            -Dsonar.java.test.binaries=back/target/test-classes
+            -Dsonar.jacoco.reportPaths=back/target/site/jacoco/jacoco.xml
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
         uses: actions/setup-java@v4
@@ -47,6 +65,10 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean install
+        working-directory: ./back
 
       - name: Run tests and generate coverage report
         run: mvn test jacoco:report
@@ -58,12 +80,13 @@ jobs:
 
       # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v4
-       # uses: SonarSource/sonarcloud-github-action@master
+       # uses: SonarSource/sonarcloud-github-action@v4
+        uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
+          projectBaseDir: back
           args: >
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
