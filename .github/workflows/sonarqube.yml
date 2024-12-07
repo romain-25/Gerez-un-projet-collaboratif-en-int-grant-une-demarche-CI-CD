@@ -13,8 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      # Étape 1 : Checkout du code
       - uses: actions/checkout@v3
       
+      # Étape 2 : Configuration de Java
       - name: Set up JDK 17 for x64
         uses: actions/setup-java@v3
         with:
@@ -22,10 +24,12 @@ jobs:
           distribution: 'zulu'
           architecture: x64
     
+      # Étape 3 : Compilation et tests backend
       - name: Build and test with Maven
         working-directory: ./back
         run: mvn clean compile test
     
+      # Étape 4 : Téléchargement du rapport Jacoco
       - name: Upload Jacoco report
         uses: actions/upload-artifact@v4
         with:
@@ -37,13 +41,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      # Étape 1 : Checkout du code
       - uses: actions/checkout@v3
 
+      # Étape 2 : Configuration de Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
       
+      # Étape 3 : Mise en cache des dépendances
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
@@ -52,14 +59,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # Étape 4 : Installation des dépendances
       - name: Install dependencies
         working-directory: ./front
         run: npm install
 
+      # Étape 5 : Exécution des tests frontend
       - name: Run tests with coverage
         working-directory: ./front
         run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
 
+      # Étape 6 : Téléchargement des résultats de couverture
       - name: Upload coverage result with artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -71,8 +81,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      # Étape 1 : Checkout du code
       - uses: actions/checkout@v3
       
+      # Étape 2 : Configuration de Java
       - name: Set up JDK 17 for x64
         uses: actions/setup-java@v3
         with:
@@ -80,8 +92,17 @@ jobs:
           distribution: 'zulu'
           architecture: x64
 
+      # Étape 3 : Analyse SonarCloud
       - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-github-action@v4
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
+        with:
+          projectBaseDir: ./back
+          args: >
+            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.organization=romain-25
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=src
+            -Dsonar.java.binaries=target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
