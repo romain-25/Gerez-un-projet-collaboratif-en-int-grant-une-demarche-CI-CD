@@ -52,12 +52,9 @@ jobs:
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=back/src,front/src
+            -Dsonar.sources=front/src
             -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,Dockerfile
             -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info
-            -Dsonar.java.binaries=back/target/classes
-            -Dsonar.java.test.binaries=back/target/test-classes
-            -Dsonar.jacoco.reportPaths=back/target/site/jacoco/jacoco.xml
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
         uses: actions/setup-java@v4
@@ -91,9 +88,7 @@ jobs:
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=back/src,front/src
-            -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,Dockerfile
-            -Dsonar.javascript.lcov.reportPaths=front/coverage/bobapp/lcov.info
+            -Dsonar.sources=back/src
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
             -Dsonar.jacoco.reportPaths=back/target/site/jacoco/jacoco.xml
