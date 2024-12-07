@@ -11,25 +11,14 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
-
-      - name: Set up JDK 17  
+    # Étape 3 : Backend - Compilation et tests
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '11'
           distribution: 'temurin'
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          cache: 'maven'
 
       - name: Build with Maven
         run: mvn clean install
@@ -39,28 +28,24 @@ jobs:
         run: mvn test jacoco:report
         working-directory: ./back
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-coverage
-          path: back/target/site/jacoco
+      - name: Verify backend coverage report
+        working-directory: back/target/site/jacoco
+        run: ls -l jacoco.xml
 
+      # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
+       # uses: SonarSource/sonarcloud-github-action@v4
         uses: SonarSource/sonarcloud-github-action@master
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKENB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-            projectBaseDir: back
-            args: >
-              -Dsonar.java.binaries=target/classes
-              -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
-              -Dsonar.organization=romain-25
-
-      # Se connecter à Docker Hub
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-      - name: Build Backend Docker Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./back
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+          projectBaseDir: back
+          args: >
+            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+            -Dsonar.organization=romain-25
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=back/src
+            -Dsonar.java.binaries=back/target/classes
+            -Dsonar.java.test.binaries=back/target/test-classes
+            -Dsonar.jacoco.reportPaths=back/target/site/jacoco/jacoco.xml
