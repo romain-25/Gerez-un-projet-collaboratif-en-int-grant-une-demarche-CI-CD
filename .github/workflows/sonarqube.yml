@@ -1,19 +1,17 @@
 name: SonarQube Analysis
-
 on:
   push:
     branches:
       - sonar
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   backend-tests:
     name: Back-end tests and Jacoco report
     runs-on: ubuntu-latest
     
     steps:
-      # Étape 1 : Checkout du code
+      # Étape 1 : Clonage du code
       - uses: actions/checkout@v3
       
       # Étape 2 : Configuration de Java
@@ -27,7 +25,7 @@ jobs:
       # Étape 3 : Compilation et tests backend
       - name: Build and test with Maven
         working-directory: ./back
-        run: mvn clean compile test
+        run: mvn clean verify jacoco:report
     
       # Étape 4 : Téléchargement du rapport Jacoco
       - name: Upload Jacoco report
@@ -35,15 +33,14 @@ jobs:
         with:
           name: backend-test-coverage
           path: ./back/target/site/jacoco/
-
+  
   front-end-tests:
     name: Front-end tests and coverage report
     runs-on: ubuntu-latest
     
     steps:
-      # Étape 1 : Checkout du code
+      # Étape 1 : Clonage du code
       - uses: actions/checkout@v3
-
       # Étape 2 : Configuration de Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -58,31 +55,31 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       # Étape 4 : Installation des dépendances
       - name: Install dependencies
         working-directory: ./front
         run: npm install
-
       # Étape 5 : Exécution des tests frontend
       - name: Run tests with coverage
         working-directory: ./front
         run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
-
       # Étape 6 : Téléchargement des résultats de couverture
       - name: Upload coverage result with artifacts
         uses: actions/upload-artifact@v4
         with:
           name: frontend-test-coverage
           path: ./front/coverage/
-
+  
   sonar-analysis:
+    needs: [backend-tests, front-end-tests]
     name: SonarQube Analysis
     runs-on: ubuntu-latest
     
     steps:
-      # Étape 1 : Checkout du code
+      # Étape 1 : Clonage du code
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Permet une analyse complète de l'historique git
       
       # Étape 2 : Configuration de Java
       - name: Set up JDK 17 for x64
@@ -92,18 +89,32 @@ jobs:
           distribution: 'zulu'
           architecture: x64
 
-      # Étape 3 : Analyse SonarCloud
+      # Étape 3 : Téléchargement des rapports de couverture
+      - name: Download backend coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-test-coverage
+          path: ./back/target/site/jacoco/
+      
+      - name: Download frontend coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-test-coverage
+          path: ./front/coverage/
+
+      # Étape 4 : Analyse SonarCloud
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectBaseDir: ./back
+          projectBaseDir: .
           args: >
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=src
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.sources=back/src,front/src
+            -Dsonar.java.binaries=back/target/classes
+            -Dsonar.java.coverage.reportPaths=back/target/site/jacoco/jacoco.xml
+            -Dsonar.javascript.lcov.reportPaths=front/coverage/lcov.info
