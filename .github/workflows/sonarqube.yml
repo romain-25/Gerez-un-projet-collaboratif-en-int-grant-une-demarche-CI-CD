@@ -31,9 +31,13 @@ jobs:
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
+      - name: Debug frontend coverage directory
+        working-directory: front/coverage
+        run: ls -l
+
       - name: Verify frontend coverage report
         working-directory: front/coverage
-        run: ls -l bobapp/lcov.info
+        run: ls -l lcov.info
 
 
       # Étape 3 : Backend - Compilation et tests
