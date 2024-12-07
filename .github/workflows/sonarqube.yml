@@ -59,13 +59,12 @@ jobs:
           path: ./front/coverage/
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v4.0.0
+        uses: SonarSource/sonarcloud-github-action@master
         with:
+          projectBaseDir: ./back
           args: >
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
             -Dsonar.organization=romain-25
-            -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.java.libraries=target/classes
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
