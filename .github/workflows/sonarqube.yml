@@ -46,7 +46,7 @@ jobs:
 
       - name: Build and test backend
         working-directory: back
-        run: mvn clean verify
+        run: mvn clean verify sonar:sonar
 
       - name: Verify backend coverage report
         working-directory: back/target/site/jacoco
