@@ -24,6 +24,8 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean test
         working-directory: ./back
+          env:
+          CI: true
     
       - name: Upload Jacoco report
         uses: actions/upload-artifact@v3
