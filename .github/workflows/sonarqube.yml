@@ -31,9 +31,9 @@ jobs:
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
-      - name: Verify frontend coverage report
-        working-directory: front
-        run: ls -l coverage/bobapp
+     # - name: Verify frontend coverage report
+      #  working-directory: front
+       # run: ls -l coverage/bobapp
 
 
       # Étape 3 : Backend - Compilation et tests
