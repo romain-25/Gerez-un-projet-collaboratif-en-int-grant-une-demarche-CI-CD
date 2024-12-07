@@ -32,11 +32,11 @@ jobs:
         run:  npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
       - name: Debug frontend coverage directory
-        working-directory: front/coverage
+        working-directory: front/bobapp/coverage
         run: ls -l
 
       - name: Verify frontend coverage report
-        working-directory: front/coverage
+        working-directory: front/bobapp/coverage
         run: ls -l lcov.info
 
 
