@@ -55,6 +55,12 @@ jobs:
       - name: Verify backend coverage report
         working-directory: back/target/site/jacoco
         run: ls -l jacoco.xml
+        
+      - name: Final SonarCloud Debug
+        run: |
+          echo "Verifying coverage for backend and frontend"
+          ls -l front/coverage/bobapp/lcov.info || echo "Frontend coverage file missing"
+          ls -l back/target/site/jacoco/jacoco.xml || echo "Backend coverage file missing"
 
       # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
