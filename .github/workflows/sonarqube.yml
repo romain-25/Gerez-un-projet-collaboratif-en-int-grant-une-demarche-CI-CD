@@ -9,14 +9,14 @@ jobs:
   sonar-analysis:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
-    
+
     steps:
       # Étape 1 : Checkout du code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       # Étape 2 : Frontend - Installation et tests
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -25,16 +25,15 @@ jobs:
 
       - name: Install dependencies for frontend
         working-directory: front
-        run: npm install 
+        run: npm install
 
       - name: Run tests for frontend
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
-     # - name: Verify frontend coverage report
-      #  working-directory: front
-       # run: ls -l coverage/bobapp
-
+      - name: Verify frontend coverage report
+        working-directory: front/coverage
+        run: ls -l lcov.info
 
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
@@ -46,11 +45,11 @@ jobs:
 
       - name: Build and test backend
         working-directory: back
-        run: mvn clean verify sonar:sonar
+        run: mvn clean verify
 
       - name: Verify backend coverage report
         working-directory: back/target/site/jacoco
-        run: ls -l jacoco.xml # Vérification que le fichier jacoco.xml est généré
+        run: ls -l jacoco.xml
 
       # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
@@ -64,7 +63,7 @@ jobs:
             -Dsonar.organization=romain-25
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=back/src,front/src
-            -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,**/*.spec.ts,**/*Test.java,Dockerfile
+            -Dsonar.exclusions=front/src/node_modules/**,front/src/proxy.config.json,front/src/favicon.ico,Dockerfile
             -Dsonar.javascript.lcov.reportPaths=front/coverage/lcov.info
             -Dsonar.java.binaries=back/target/classes
             -Dsonar.java.test.binaries=back/target/test-classes
