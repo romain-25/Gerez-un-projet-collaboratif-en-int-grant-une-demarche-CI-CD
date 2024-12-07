@@ -52,6 +52,14 @@ jobs:
         working-directory: back
         run: mvn clean verify
 
+      - name: Build with Maven
+        run: mvn clean install
+        working-directory: ./back
+
+      - name: Run tests and generate coverage report
+        run: mvn test jacoco:report
+        working-directory: ./back
+
       - name: Verify backend coverage report
         working-directory: back/target/site/jacoco
         run: ls -l jacoco.xml
