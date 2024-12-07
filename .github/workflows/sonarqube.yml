@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Nécessaire pour SonarQube
+          fetch-depth: 0
       
       # Étape 2 : Frontend - Installation et tests
       - name: Set up Node.js
@@ -25,11 +25,15 @@ jobs:
 
       - name: Install dependencies for frontend
         working-directory: front
-        run: npm install
+        run: npm install 
 
       - name: Run tests for frontend
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Verify frontend coverage report
+        working-directory: front/coverage
+        run: ls -l lcov.info # Vérification que le fichier lcov.info est généré
 
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
@@ -42,6 +46,10 @@ jobs:
       - name: Build and test backend
         working-directory: back
         run: mvn clean verify
+
+      - name: Verify backend coverage report
+        working-directory: back/target/site/jacoco
+        run: ls -l jacoco.xml # Vérification que le fichier jacoco.xml est généré
 
       # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
