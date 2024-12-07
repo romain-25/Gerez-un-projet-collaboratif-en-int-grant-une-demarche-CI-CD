@@ -32,8 +32,9 @@ jobs:
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
       - name: Verify frontend coverage report
-        working-directory: front/coverage
-        run: ls -l lcov.info # Vérification que le fichier lcov.info est généré
+        working-directory: front
+        run: ls -l coverage/bobapp
+
 
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
