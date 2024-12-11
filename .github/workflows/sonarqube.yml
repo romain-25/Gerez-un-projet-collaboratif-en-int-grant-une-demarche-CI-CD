@@ -33,17 +33,17 @@ jobs:
         name: backend-test-coverage
         path: ./back/target/site/jacoco/
 
-   # - name: Backend SonarCloud Scan
-   #   working-directory: ./back
-   #   env:
-   #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-   #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-   #   run: |
-   #     mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-   #     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-   #     -Dsonar.java.coveragePlugin=jacoco \
-   #     -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
+    - name: Backend SonarCloud Scan
+      working-directory: ./back
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: |
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+        -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+        -Dsonar.java.coveragePlugin=jacoco \
+        -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
       
 
     - name: Upload Backend Test Report
@@ -53,12 +53,12 @@ jobs:
         path: back/target/site/jacoco
         retention-days: 30
 
-    #- name: Upload Backend SonarCloud Report
-    #  uses: actions/upload-artifact@v4
-    #  with:
-    #    name: backend-sonarcloud-report
-    #    path: back/.scannerwork
-    #    retention-days: 30
+    - name: Upload Backend SonarCloud Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-sonarcloud-report
+        path: back/.scannerwork
+        retention-days: 30
 
   sonarcloud-frontend:
     name: SonarCloud Frontend
@@ -85,17 +85,17 @@ jobs:
       working-directory: ./front
       run: npm ci
 
-   # - name: Frontend SonarCloud Scan
-   #   uses: SonarSource/sonarqube-scan-action@v2.0.2
-   #   with:
-   #     projectBaseDir: ./front
-   #     args: >
-   #       -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
-   #       -Dsonar.organization=romain-25
-   #   env:
-   #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-   #     SONAR_HOST_URL: https://sonarcloud.io
+    - name: Frontend SonarCloud Scan
+      uses: SonarSource/sonarqube-scan-action@v2.0.2
+      with:
+        projectBaseDir: ./front
+        args: >
+          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+          -Dsonar.organization=romain-25
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: https://sonarcloud.io
 
     - name: Run tests with coverage
       working-directory: ./front
@@ -107,12 +107,12 @@ jobs:
         name: frontend-test-coverage
         path: ./front/coverage/
 
-   # - name: Upload Frontend SonarCloud Report
-   #   uses: actions/upload-artifact@v4
-   #   with:
-   #     name: frontend-sonarcloud-report
-   #     path: front/.scannerwork
-   #     retention-days: 30
+    - name: Upload Frontend SonarCloud Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-sonarcloud-report
+        path: front/.scannerwork
+        retention-days: 30
 
         
 
