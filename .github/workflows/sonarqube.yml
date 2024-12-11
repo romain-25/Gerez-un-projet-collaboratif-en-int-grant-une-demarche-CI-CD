@@ -23,13 +23,15 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-    - name: Install Backend Dependencies
+    - name: Build and test with Maven
+      run: mvn clean test
       working-directory: ./back
-      run: mvn clean install -DskipTests
 
-    - name: Run Backend Tests with Coverage
-      working-directory: ./back
-      run: mvn test jacoco:report
+    - name: Upload Jacoco report
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-test-coverage
+        path: ./back/target/site/jacoco/
 
     - name: Backend SonarCloud Scan
       working-directory: ./back
@@ -69,18 +71,19 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
-        cache: 'npm'
-        cache-dependency-path: front/package-lock.json
+         node-version: '20.x'
 
-    - name: Install dependencies for frontend
-      working-directory: front
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-node-
+            
+    - name: Install dependencies
+      working-directory: ./front
       run: npm ci
-
-    - name: Run tests for frontend
-      working-directory: front
-      run: |
-        npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
     - name: Frontend SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2.0.2
@@ -94,12 +97,15 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io
 
-    - name: Upload Frontend Test Report
+    - name: Run tests with coverage
+      working-directory: ./front
+      run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
+
+    - name: Upload coverage result with artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: frontend-test-report
-        path: front/coverage-report
-        retention-days: 30
+        name: frontend-test-coverage
+        path: ./front/coverage/
 
     - name: Upload Frontend SonarCloud Report
       uses: actions/upload-artifact@v4
@@ -108,30 +114,32 @@ jobs:
         path: front/.scannerwork
         retention-days: 30
 
-  create-reports-release:
-    needs: [sonarcloud-backend, sonarcloud-frontend]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+        
 
-    - name: Download Backend Reports
-      uses: actions/download-artifact@v4
-      with:
-        name: backend-test-report
-        path: reports/backend-tests
+ # create-reports-release:
+  #  needs: [sonarcloud-backend, sonarcloud-frontend]
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - uses: actions/checkout@v4
 
-    - name: Download Frontend Reports
-      uses: actions/download-artifact@v4
-      with:
-        name: frontend-test-report
-        path: reports/frontend-tests
+  #  - name: Download Backend Reports
+  #    uses: actions/download-artifact@v4
+  #    with:
+  #      name: backend-test-report
+  #      path: reports/backend-tests
 
-    - name: Create Release with Reports
-      uses: softprops/action-gh-release@v1
-      if: github.ref == 'refs/heads/main'
-      with:
-        files: |
-          reports/backend-tests/**/*
-          reports/frontend-tests/**/*
-        name: Quality Reports ${{ github.ref_name }}
-        tag_name: reports-${{ github.sha }}
+  #  - name: Download Frontend Reports
+  #    uses: actions/download-artifact@v4
+  #    with:
+  #      name: frontend-test-report
+  #      path: reports/frontend-tests
+
+  #  - name: Create Release with Reports
+  #    uses: softprops/action-gh-release@v1
+  #    if: github.ref == 'refs/heads/main'
+  #    with:
+  #      files: |
+  #        reports/backend-tests/**/*
+  #        reports/frontend-tests/**/*
+  #      name: Quality Reports ${{ github.ref_name }}
+  #      tag_name: reports-${{ github.sha }}
