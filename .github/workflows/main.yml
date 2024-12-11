@@ -91,7 +91,8 @@ jobs:
 
     - name: Run tests with coverage
       working-directory: front
-      run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless -- --disable-gpu --no-sandbox --disable-setuid-sandbox
+      run: ng test --code-coverage --watch=false --progress=false --browsers=ChromeHeadless --disable-gpu --no-sandbox --disable-setuid-sandbox
+
 
 
     - name: Upload Frontend and back-end SonarCloud Report
