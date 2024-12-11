@@ -49,7 +49,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: backend-sonarcloud-report
-        path: .scannerwork
+        path: .scannerwork/report-task.txt
         retention-days: 30
 
     - name: Log in to Docker Hub
@@ -105,7 +105,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: frontend-sonarcloud-report
-        path: .scannerwork
+        path: .scannerwork/report-task.txt
         retention-days: 30
 
     - name: Build Frontend Docker Image
