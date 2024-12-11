@@ -40,41 +40,33 @@ jobs:
         run: ls -l lcov.info
       # Étape 3 : Backend - Compilation et tests
       - name: Set up JDK 11
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Build with Maven
-        run: mvn clean install
-        working-directory: ./back
-
-      - name: Run tests and generate coverage report
-        run: mvn test jacoco:report
-        working-directory: back
-
-      - name: Verify backend coverage report
-        working-directory: back/target/site/jacoco
-        run: ls -l jacoco.xml
-        
-      - name: Run SonarQube Analysis
-        run: mvn sonar:sonar -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-        working-directory: back
-
-
-      # Étape 4 : Analyse SonarCloud
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v4
-        #uses: SonarSource/sonarcloud-github-action@master
+          java-version: 11
+          distribution: 'zulu'
+      
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      
+      - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
-            -Dsonar.organization=romain-25
-            -Dsonar.host.url=https://sonarcloud.io
+        run: |
+          mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+          -Dsonar.organization=romain-25
         #   -Dsonar.sources=back/src
         #   -Dsonar.java.binaries=back/target/classes
         #   -Dsonar.java.test.binaries=back/target/test-classes
