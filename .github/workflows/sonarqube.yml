@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   sonarcloud-backend:
     name: SonarCloud Backend
@@ -15,13 +16,22 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+
     - name: Backend SonarCloud Scan
       working-directory: ./back
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+           -Dsonar.java.test.binaries=back/target/test-classes \
+           -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
+
+    - name: Upload Backend SonarCloud Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: backend-sonarcloud-report
+        path: back/.scannerwork
 
   sonarcloud-frontend:
     name: SonarCloud Frontend
@@ -31,27 +41,34 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-          node-version: 18
+        node-version: 18
+
     - name: Install dependencies for frontend
       working-directory: front
       run: npm ci
+
     - name: Run tests for frontend
       working-directory: front
-      run:  npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+      run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
     - name: Debug frontend coverage directory
       working-directory: front/coverage/bobapp
       run: ls -l
 
-    - name: Frontend SonarCloud Scan 
-      uses: SonarSource/sonarqube-scan-action@v2.0.2 
-      with: 
-        projectBaseDir: ./front 
-        args: 
-          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD 
-          -Dsonar.organization=romain-25 
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+    - name: Frontend SonarCloud Scan
+      uses: SonarSource/sonarqube-scan-action@v2.0.2
+      with:
+        projectBaseDir: ./front
+        args: >
+          -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD
+          -Dsonar.organization=romain-25
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io
-        #   -Dsonar.java.test.binaries=back/target/test-classes
-        #   -Dsonar.jacoco.reportPaths=back/target/site/jacoco/jacoco.xml
+
+    - name: Upload Frontend SonarCloud Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-sonarcloud-report
+        path: front/.scannerwork
