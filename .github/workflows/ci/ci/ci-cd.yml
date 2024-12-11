@@ -1,4 +1,4 @@
-name: SonarQube Analysis and Tests
+name: Analysis, Tests and Docker image
 on:
   push:
     branches:
