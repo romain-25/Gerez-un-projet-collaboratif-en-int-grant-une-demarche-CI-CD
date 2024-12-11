@@ -42,7 +42,7 @@ jobs:
         -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
         -Dsonar.java.coveragePlugin=jacoco \
         -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
-        -Dsonar.exclusions=src/polyfills.ts,src/**/*.d.ts
+      
 
     - name: Upload Backend Test Report
       uses: actions/upload-artifact@v4
@@ -93,6 +93,7 @@ jobs:
           -Dsonar.tests=src
           -Dsonar.javascript.lcov.reportPaths=coverage-report/lcov.info
           -Dsonar.coverage.exclusions=**/node_modules/**,**/*.spec.ts,**/*.mock.ts
+          -Dsonar.exclusions=src/polyfills.ts,src/**/*.d.ts
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
