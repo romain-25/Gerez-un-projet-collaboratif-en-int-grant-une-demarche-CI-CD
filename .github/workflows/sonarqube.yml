@@ -24,8 +24,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-          # -Dsonar.coverage.jacoco.xmlReportPaths=back/target/site/jacoco/jacoco.xml
-           #-Dsonar.java.test.binaries=back/target/test-classes \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+           #-Dsonar.java.test.binaries=target/test-classes \
            
 
     - name: Upload Backend SonarCloud Report
