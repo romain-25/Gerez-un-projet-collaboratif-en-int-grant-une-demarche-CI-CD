@@ -35,7 +35,7 @@ jobs:
 
     - name: Install dependencies for frontend
       working-directory: front
-      run: npm install
+      run: npm ci
 
     - name: Run tests for frontend
       working-directory: front
@@ -46,7 +46,7 @@ jobs:
       run: ls -l
       
     - name: Frontend SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+      uses: SonarSource/sonarqube-scan-action@v2.0.2
       with:
         projectBaseDir: ./front
         args: >
