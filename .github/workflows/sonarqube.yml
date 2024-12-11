@@ -53,12 +53,12 @@ jobs:
         path: back/target/site/jacoco
         retention-days: 30
 
-    - name: Upload Backend SonarCloud Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-sonarcloud-report
-        path: back/.scannerwork
-        retention-days: 30
+    #- name: Upload Backend SonarCloud Report
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: backend-sonarcloud-report
+    #    path: back/.scannerwork
+    #    retention-days: 30
 
   sonarcloud-frontend:
     name: SonarCloud Frontend
@@ -107,12 +107,12 @@ jobs:
         name: frontend-test-coverage
         path: ./front/coverage/
 
-    - name: Upload Frontend SonarCloud Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-sonarcloud-report
-        path: front/.scannerwork
-        retention-days: 30
+   # - name: Upload Frontend SonarCloud Report
+   #   uses: actions/upload-artifact@v4
+   #   with:
+   #     name: frontend-sonarcloud-report
+   #     path: front/.scannerwork
+   #     retention-days: 30
 
         
 
