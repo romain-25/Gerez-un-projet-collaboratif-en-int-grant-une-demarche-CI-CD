@@ -27,17 +27,24 @@ jobs:
     name: SonarCloud Frontend
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js
-      uses: actions/setup-node@v3
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
       with:
-        node-version: '16'
-    - name: Install dependencies
-      working-directory: ./front
-      run: npm ci
-    - name: Run tests with coverage
-      working-directory: ./front
-      run: npm run test:coverage
+          node-version: 18
+
+    - name: Install dependencies for frontend
+      working-directory: front
+      run: npm install
+
+    - name: Run tests for frontend
+      working-directory: front
+      run:  npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+    - name: Debug frontend coverage directory
+      working-directory: front/coverage/bobapp
+      run: ls -l
+      
     - name: Frontend SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
