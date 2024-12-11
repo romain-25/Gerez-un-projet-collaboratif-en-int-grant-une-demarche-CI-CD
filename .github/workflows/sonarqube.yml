@@ -57,6 +57,11 @@ jobs:
       - name: Verify backend coverage report
         working-directory: back/target/site/jacoco
         run: ls -l jacoco.xml
+        
+      - name: Run SonarQube Analysis
+        run: mvn sonar:sonar -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+        working-directory: back
+
 
       # Étape 4 : Analyse SonarCloud
       - name: SonarCloud Scan
