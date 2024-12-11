@@ -44,14 +44,6 @@ jobs:
         -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
         -Dsonar.java.coveragePlugin=jacoco \
         -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
-      
-
-    - name: Upload Backend Test Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-test-report
-        path: back/target/site/jacoco
-        retention-days: 30
 
     - name: Upload Backend SonarCloud Report
       uses: actions/upload-artifact@v4
@@ -101,17 +93,11 @@ jobs:
       working-directory: ./front
       run: npm run test -- --code-coverage --no-watch --no-progress --browsers=ChromeHeadless
 
-    - name: Upload coverage result with artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-test-coverage
-        path: ./front/coverage/
-
-    - name: Upload Frontend SonarCloud Report
+    - name: Upload Frontend and back-end SonarCloud Report
       uses: actions/upload-artifact@v4
       with:
         name: frontend-sonarcloud-report
-        path: front/.scannerwork
+        path: ./.scannerwork
         retention-days: 30
 
         
