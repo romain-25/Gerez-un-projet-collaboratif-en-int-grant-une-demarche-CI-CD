@@ -9,7 +9,7 @@ on:
 
 jobs:
   backend:
-    name: SonarCloud Backend
+    name: Backend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
   frontend:
-    name: SonarCloud Frontend
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
             
     - name: Install dependencies
       working-directory: front
-      run: npm ci
+      run: yarn install
 
     - name: Frontend SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2.0.2
