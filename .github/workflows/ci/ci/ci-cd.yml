@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  sonarcloud-backend:
+  backend:
     name: SonarCloud Backend
     runs-on: ubuntu-latest
     steps:
@@ -45,7 +45,14 @@ jobs:
         -Dsonar.java.coveragePlugin=jacoco \
         -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
 
-  sonarcloud-frontend:
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: Build Backend Docker Image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./back
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+  frontend:
     name: SonarCloud Frontend
     runs-on: ubuntu-latest
     steps:
@@ -58,13 +65,13 @@ jobs:
       with:
          node-version: '20.x'
 
-   # - name: Cache dependencies
-   #   uses: actions/cache@v4
-   #   with:
-   #     path: ~/.npm
-   #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-   #     restore-keys: |
-   #         ${{ runner.os }}-node-
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-node-
             
     - name: Install dependencies
       working-directory: front
@@ -93,7 +100,10 @@ jobs:
         path: .scannerwork
         retention-days: 30
 
-        
+    - name: Build Frontend Docker Image
+      run: |
+       docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./front
+       docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
  # create-reports-release:
   #  needs: [sonarcloud-backend, sonarcloud-frontend]
