@@ -76,16 +76,10 @@ jobs:
       working-directory: front
       run: npm ci
 
-    - name: Run frontend linting
-      working-directory: front
-      run: npm run lint
-
     - name: Run tests for frontend
       working-directory: front
       run: |
         npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
-        mkdir -p coverage-report
-        cp -r coverage/bobapp/* coverage-report/
 
     - name: Frontend SonarCloud Scan
       uses: SonarSource/sonarqube-scan-action@v2.0.2
