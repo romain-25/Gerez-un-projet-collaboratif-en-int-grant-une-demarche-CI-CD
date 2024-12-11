@@ -93,7 +93,7 @@ jobs:
           -Dsonar.tests=src
           -Dsonar.javascript.lcov.reportPaths=coverage-report/lcov.info
           -Dsonar.coverage.exclusions=**/node_modules/**,**/*.spec.ts,**/*.mock.ts
-          -Dsonar.exclusions=src/polyfills.ts,src/**/*.d.ts
+          -Dsonar.exclusions=src/polyfills.ts,src/**/*.d.ts,src/index.html
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
