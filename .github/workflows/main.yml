@@ -73,7 +73,7 @@ jobs:
           node-version: 18
     - name: Install dependencies for frontend
       working-directory: front
-      run: npm ci
+      run: yarn install
       
     - name: Run tests for frontend
       working-directory: front
