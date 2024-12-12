@@ -80,7 +80,7 @@ jobs:
         SONAR_HOST_URL: https://sonarcloud.io
       run: |
           # Analyse Backend (Java)
-          cd backend
+          cd back
           mvn clean verify
           sonar-scanner \
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
@@ -91,7 +91,7 @@ jobs:
             -Dsonar.junit.reportPaths=target/surefire-reports
 
           # Analyse Frontend (Angular)
-          cd ../frontend
+          cd ../front
           npm install
           npm test -- --coverage --testResultsProcessor=jest-junit
           sonar-scanner \
