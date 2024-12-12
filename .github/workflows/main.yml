@@ -1,4 +1,5 @@
 name: Analysis, Tests and Docker image
+
 on:
   push:
     branches:
@@ -8,133 +9,100 @@ on:
       - main
 
 jobs:
-  backend:
-    name: Backend
+  analysis:
+    name: Analysis, Tests and Docker Image
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Improved depth for better code analysis
+      # Récupérer le code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch complet pour l'analyse SonarCloud
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: 'maven'
+      # Backend Analysis (Java)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
 
-    - name: Build and test with Maven
-      run: mvn clean test
-      working-directory: ./back
-
-    - name: Upload Jacoco report
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-test-coverage
-        path: ./back/target/site/jacoco/
-
-   # - name: Backend SonarCloud Scan
-   #   working-directory: ./back
-   #   env:
-   #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-   #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-   #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-   #   run: |
-   #     mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-   #     -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-   #     -Dsonar.java.coveragePlugin=jacoco \
-   #     -Dsonar.coverage.exclusions=**/config/**,**/dto/**,**/model/**
-
-  #frontend:
-    #- name: Frontend
-     # runs-on: ubuntu-latest
-   # steps:
-   # - uses: actions/checkout@v4
-    #  with:
-     #   fetch-depth: 0
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-          node-version: 18
-    - name: Install dependencies for frontend
-      working-directory: front
-      run: yarn install
-      
-    - name: Run tests for frontend
-      working-directory: front
-      
-      run:  npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
-    - name: Debug frontend coverage directory
-      working-directory: front/coverage/bobapp
-      run: ls -l
-
-    - name: Verify frontend coverage report
-      working-directory: front/coverage/bobapp
-      run: ls -l lcov.info
-
-    - name: Run SonarScanner with Docker
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: https://sonarcloud.io
-      run: |
-        docker run --rm \
-        -e SONAR_HOST_URL=https://sonarcloud.io \
-        -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
-        -v $(pwd):/usr/src \
-        sonarsource/sonar-scanner-cli \
-        sonar-scanner \
-        -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
-        -Dsonar.sources=src
-
-
-      
-    - name: Frontend SonarCloud Scan
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: https://sonarcloud.io
-      run: |
-          # Analyse Backend (Java)
+      - name: Build and Test Backend
+        run: |
           cd back
           mvn clean verify
-          sonar-scanner \
-            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
-            -Dsonar.sources=src/main/java \
-            -Dsonar.tests=src/test/java \
-            -Dsonar.java.binaries=target/classes \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.junit.reportPaths=target/surefire-reports
 
-          # Analyse Frontend (Angular)
-          cd ../front
-          npm install
-          npm test -- --coverage --testResultsProcessor=jest-junit
-          sonar-scanner \
+      - name: Backend SonarCloud Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        run: |
+          cd back
+          mvn sonar:sonar \
+            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.java.coveragePlugin=jacoco \
+            -Dsonar.java.binaries=target/classes
+
+      # Frontend Analysis (Angular)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies for Frontend
+        run: |
+          cd front
+          yarn install
+
+      - name: Run Frontend Tests with Coverage
+        run: |
+          cd front
+          npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Debug Frontend Coverage
+        run: |
+          ls -l front/coverage/bobapp
+
+      - name: Frontend SonarCloud Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        run: |
+          cd front
+          docker run --rm \
+          -e SONAR_HOST_URL=https://sonarcloud.io \
+          -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+          -v $(pwd):/usr/src \
+          sonarsource/sonar-scanner-cli \
             -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
             -Dsonar.sources=src \
             -Dsonar.exclusions=**/*.spec.ts,**/*.test.ts \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.testExecutionReportPaths=test-report.xml
+            -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
 
-    - name: Generate SonarCloud report link
-      run: |
-        echo "https://sonarcloud.io/dashboard?id=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD" > sonarcloud-report-link.txt
-    - name: Upload SonarCloud report link
-      uses: actions/upload-artifact@v3
-      with:
-        name: sonarcloud-report
-        path: sonarcloud-report-link.txt
+      # Upload SonarCloud Report Link
+      - name: Generate SonarCloud Report Link
+        run: |
+          echo "https://sonarcloud.io/dashboard?id=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD" > sonarcloud-report-link.txt
 
-    - name: Build Frontend Docker Image
-      run: |
-       docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./front
-       docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+      - name: Upload SonarCloud Report Link
+        uses: actions/upload-artifact@v3
+        with:
+          name: sonarcloud-report
+          path: sonarcloud-report-link.txt
 
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-    - name: Build Backend Docker Image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./back
-        docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+      # Docker Build and Push
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Build and Push Backend Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./back
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+      - name: Build and Push Frontend Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./front
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
