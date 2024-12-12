@@ -84,7 +84,7 @@ jobs:
         -v $(pwd):/usr/src \
         sonarsource/sonar-scanner-cli \
         sonar-scanner \
-        -Dsonar.projectKey=my-project \
+        -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
         -Dsonar.sources=src
 
 
