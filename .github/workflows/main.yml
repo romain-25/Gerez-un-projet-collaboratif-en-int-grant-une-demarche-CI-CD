@@ -73,15 +73,20 @@ jobs:
       working-directory: front/coverage/bobapp
       run: ls -l lcov.info
 
-    - name: Run SonarScanner
+    - name: Run SonarScanner with Docker
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: https://sonarcloud.io
       run: |
-        export PATH="$HOME/sonar-scanner-4.8.0.2856-linux/bin:$PATH"
+        docker run --rm \
+        -e SONAR_HOST_URL=https://sonarcloud.io \
+        -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+        -v $(pwd):/usr/src \
+        sonarsource/sonar-scanner-cli \
         sonar-scanner \
-        -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+        -Dsonar.projectKey=my-project \
         -Dsonar.sources=src
+
 
       
     - name: Frontend SonarCloud Scan
