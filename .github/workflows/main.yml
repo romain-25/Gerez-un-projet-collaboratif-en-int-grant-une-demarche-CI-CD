@@ -44,6 +44,10 @@ jobs:
             -Dsonar.organization=romain-25 \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN_BACK \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.java.coveragePlugin=jacoco \
+            -Dsonar.java.binaries=target/classes
 
       - name: Upload Jacoco report
         uses: actions/upload-artifact@v4
