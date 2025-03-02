@@ -46,7 +46,7 @@ jobs:
             -Dsonar.java.binaries=target/classes
 
       - name: Upload Jacoco report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-test-coverage
           path: ./back/target/site/jacoco/
@@ -69,7 +69,7 @@ jobs:
         run: |
           ls -l front/coverage/bobapp
       - name: Upload coverage result with artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-test-coverage
           path: ./front/coverage/
@@ -96,7 +96,7 @@ jobs:
         run: |
           echo "https://sonarcloud.io/dashboard?id=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD" > sonarcloud-report-link.txt
       - name: Upload SonarCloud Report Link
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sonarcloud-report
           path: sonarcloud-report-link.txt
