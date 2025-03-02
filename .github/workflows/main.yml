@@ -88,12 +88,12 @@ jobs:
           path: ./front/coverage/
 
       - name: Frontend SonarCloud Analysis
+        working-directory: ./front
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN_FRONT : ${{ secrets.SONAR_TOKEN_FRONT }}
           SONAR_HOST_URL: https://sonarcloud.io
         run: |
-          cd front
           docker run --rm \
           -e SONAR_HOST_URL=https://sonarcloud.io \
           -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN_FRONT }} \
