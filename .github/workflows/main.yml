@@ -83,11 +83,7 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         run: |
           cd front
-          docker run --rm \
-          -e SONAR_HOST_URL=https://sonarcloud.io \
-          -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN_FRONT }} \
-          -v $(pwd):/usr/src \
-          sonarsource/sonar-scanner-cli \
+          sonar-scanner \
             -Dsonar.projectKey=romain-25_bobapp-front \
             -Dsonar.organization=romain-25 \
             -Dsonar.host.url=$SONAR_HOST_URL \
@@ -95,6 +91,7 @@ jobs:
             -Dsonar.sources=src \
             -Dsonar.exclusions=**/*.spec.ts,**/*.test.ts \
             -Dsonar.javascript.lcov.reportPaths=coverage/bobapp/lcov.info
+            
       # Upload SonarCloud Report Link
       - name: Generate SonarCloud Report Link
         run: |
