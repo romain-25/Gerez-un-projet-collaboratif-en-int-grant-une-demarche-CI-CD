@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <sonar.projectKey>romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD</sonar.projectKey>
+        <sonar.projectKey>romain-25_bobapp-back</sonar.projectKey>
         <sonar.organization>romain-25</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
