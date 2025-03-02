@@ -75,6 +75,14 @@ jobs:
         with:
           name: frontend-test-coverage
           path: ./front/coverage/
+      - name: Install SonarScanner
+        run: |
+          sudo apt update
+          sudo apt install -y unzip
+          curl -Lo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-linux.zip
+          unzip sonar-scanner.zip
+          sudo mv sonar-scanner-5.0.1.3006-linux /opt/sonar-scanner
+          echo "export PATH=\$PATH:/opt/sonar-scanner/bin" >> $GITHUB_ENV
 
       - name: Frontend SonarCloud Analysis
         env:
