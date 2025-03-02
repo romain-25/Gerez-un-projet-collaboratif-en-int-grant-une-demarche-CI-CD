@@ -98,7 +98,8 @@ jobs:
       # Upload SonarCloud Report Link
       - name: Generate SonarCloud Report Link
         run: |
-          echo "https://sonarcloud.io/dashboard?id=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD" > sonarcloud-report-link.txt
+          echo "https://sonarcloud.io/dashboard?id=romain-25_bobapp-back" > sonarcloud-back-report.txt
+          echo "https://sonarcloud.io/dashboard?id=romain-25_bobapp-front" > sonarcloud-front-report.txt
       - name: Upload SonarCloud Report Link
         uses: actions/upload-artifact@v4
         with:
