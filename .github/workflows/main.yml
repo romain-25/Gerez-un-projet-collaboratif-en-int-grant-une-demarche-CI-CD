@@ -38,7 +38,7 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         run: |
           cd back
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
+          mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=romain-25_bobapp-back \
             -Dsonar.organization=romain-25 \
             -Dsonar.host.url=$SONAR_HOST_URL \
