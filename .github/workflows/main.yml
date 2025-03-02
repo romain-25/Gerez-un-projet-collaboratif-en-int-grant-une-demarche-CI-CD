@@ -20,12 +20,11 @@ jobs:
           fetch-depth: 0  # Fetch complet pour l'analyse SonarCloud
 
       # Backend Analysis (Java)
-      - name: Set up JDK 17
+      - name: Set up JDK 11
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven'
+          java-version: 11
+          distribution: 'zulu'
 
       - name: Build and Test Backend
         run: |
