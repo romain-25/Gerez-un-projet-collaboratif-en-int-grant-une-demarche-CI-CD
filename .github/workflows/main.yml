@@ -37,7 +37,6 @@ jobs:
           SONAR_TOKEN_BACK: ${{ secrets.SONAR_TOKEN_BACK }}
           SONAR_HOST_URL: https://sonarcloud.io
         run: |
-          cd back
           mvn sonar:sonar \
             -Dsonar.projectKey=romain-25_bobapp-back \
             -Dsonar.organization=romain-25 \
