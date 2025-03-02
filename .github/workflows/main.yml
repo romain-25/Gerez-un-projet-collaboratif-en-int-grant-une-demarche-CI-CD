@@ -38,7 +38,7 @@ jobs:
           SONAR_TOKEN_BACK: ${{ secrets.SONAR_TOKEN_BACK }}
           SONAR_HOST_URL: https://sonarcloud.io
         run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar \
+          mvn clean verify sonar:sonar \
             -Dsonar.projectKey=romain-25_bobapp-back \
             -Dsonar.projectName='romain-25_bobapp-back' \
             -Dsonar.organization=romain-25 \
