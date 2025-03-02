@@ -49,7 +49,7 @@ jobs:
             -Dsonar.projectKey=romain-25_bobapp-back \
             -Dsonar.organization=romain-25 \
             -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN_BACK \
+            -Dsonar.token=$SONAR_TOKEN_BACK \
             -Dsonar.sources=src/main/java \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
             -Dsonar.java.coveragePlugin=jacoco \
