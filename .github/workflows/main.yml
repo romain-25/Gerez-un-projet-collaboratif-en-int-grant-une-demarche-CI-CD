@@ -39,7 +39,7 @@ jobs:
         run: |
           cd back
           mvn sonar:sonar \
-            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+            -Dsonar.projectKey=romain-25_bobapp-back \
             -Dsonar.organization=romain-25 \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
             -Dsonar.java.coveragePlugin=jacoco \
@@ -86,7 +86,7 @@ jobs:
           -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN_FRONT }} \
           -v $(pwd):/usr/src \
           sonarsource/sonar-scanner-cli \
-            -Dsonar.projectKey=romain-25_Gerez-un-projet-collaboratif-en-int-grant-une-demarche-CI-CD \
+            -Dsonar.projectKey=romain-25_bobapp-front \
             -Dsonar.organization=romain-25 \
             -Dsonar.sources=src \
             -Dsonar.exclusions=**/*.spec.ts,**/*.test.ts \
